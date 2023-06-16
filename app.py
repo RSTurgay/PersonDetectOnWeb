@@ -6,13 +6,17 @@ import numpy as np
 import cv2
 from PIL import Image
 
+import libcamera
+
 from picamera2 import MappedArray, Picamera2, Preview
 from picamera2.encoders import JpegEncoder, H264Encoder
 from picamera2.outputs import FileOutput
 
 app = Flask(__name__)
 picam2 = Picamera2()
-picam2.configure(picam2.create_video_configuration(main={"format": "XRGB8888", "size": (640, 480)}))
+picam2_config = picam2.create_video_configuration(main={"format": "XRGB8888", "size": (640, 480)})
+picam2_config["transform"] = libcamera.Transform(hflip=1, vflip=1)
+picam2.configure(picam2_config)
 
 
 class StreamingOutput(io.BufferedIOBase):
